@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;CanWealth • Canadian Family Finance Dashboard&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-content { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-content.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-50 text-gray-800 font-sans"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="auth-overlay" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md flex items-center justify-center z-50"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-2xl font-bold text-gray-900 mb-2"&gt;Secure Financial Vault&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-sm text-gray-600 mb-6"&gt;Enter a master password. Your data is encrypted locally using AES-GCM and never leaves your browser.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="password" id="master-password" class="w-full px-4 py-3 border rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Master Password"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="initVault()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition"&gt;Unlock Vault&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p id="auth-error" class="text-red-500 text-sm mt-3 hidden"&gt;Invalid password or corrupted data vault.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="min-h-screen flex flex-col"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;header class="bg-white border-b border-gray-200 sticky top-0 z-40"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex items-center gap-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="bg-emerald-600 text-white p-2 rounded-lg font-bold text-xl"&gt;🇨🇦&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h1 class="text-xl font-bold tracking-tight text-gray-900"&gt;CanWealth &lt;span class="text-xs font-normal text-gray-500"&gt;Family Edition&lt;/span&gt;&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex items-center gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="saveAllData()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm"&gt;Save Vault&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="lockVault()" class="border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg text-sm transition"&gt;Lock&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;aside class="md:w-64 flex-shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;nav class="space-y-1 sticky top-24"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-3 transition active bg-emerald-50 text-emerald-700"&gt;📊 Dashboard &amp; FIRE&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="switchTab('networth')" id="tab-btn-networth" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-3 transition text-gray-600 hover:bg-gray-100"&gt;⚖️ Net Worth Statement&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="switchTab('budget')" id="tab-btn-budget" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-3 transition text-gray-600 hover:bg-gray-100"&gt;📝 Family Budgeting&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="switchTab('calculators')" id="tab-btn-calculators" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-3 transition text-gray-600 hover:bg-gray-100"&gt;🧮 Calculators &amp; Taxes&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/aside&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;main class="flex-1 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section id="tab-dashboard" class="tab-content active space-y-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-bold text-gray-900"&gt;Family Financial Dashboard&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-500 text-sm"&gt;Real-time consolidated view of your family's journey toward financial independence.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-1 sm:grid-cols-3 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-50 p-5 rounded-xl border border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-xs font-semibold uppercase tracking-wider text-gray-400"&gt;Total Net Worth&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-3xl font-bold text-gray-900 mt-1" id="dash-networth"&gt;$0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-50 p-5 rounded-xl border border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-xs font-semibold uppercase tracking-wider text-gray-400"&gt;FIRE Target Fund&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-3xl font-bold text-emerald-600 mt-1" id="dash-fire-target"&gt;$0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-50 p-5 rounded-xl border border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-xs font-semibold uppercase tracking-wider text-gray-400"&gt;FIRE Progress&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-3xl font-bold text-blue-600 mt-1" id="dash-fire-progress"&gt;0%&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="border border-gray-200 rounded-xl p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-sm font-semibold text-gray-700 mb-4"&gt;Historical Net Worth Trend&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="h-64 w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;canvas id="trendChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-lg font-bold text-emerald-900 mb-4"&gt;🍁 Canadian FIRE Calculator&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs font-medium text-gray-600 mb-1"&gt;Target Annual Retirement Income ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="fire-expenses" value="60000" oninput="calculateFIRE()" class="w-full border rounded-lg p-2 bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs font-medium text-gray-600 mb-1"&gt;Safe Withdrawal Rate (%)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="fire-swr" value="4.0" step="0.1" oninput="calculateFIRE()" class="w-full border rounded-lg p-2 bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section id="tab-networth" class="tab-content space-y-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-bold text-gray-900"&gt;Family Net Worth Statement&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-500 text-sm"&gt;Track individual, spousal, and joint assets and liabilities.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="border border-gray-200 rounded-xl overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="bg-emerald-600 px-4 py-3 text-white font-semibold flex justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;Assets (What You Own)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button onclick="addRow('asset-table')" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded"&gt;+ Add Asset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;table class="w-full text-left text-sm" id="asset-table"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;thead class="bg-gray-50 text-gray-600 border-b border-gray-200 uppercase text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3"&gt;Asset Description / Account (e.g., RRSP, TFSA)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-32"&gt;Owner&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-40"&gt;Value ($)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-16"&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="border border-gray-200 rounded-xl overflow-hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="bg-rose-600 px-4 py-3 text-white font-semibold flex justify-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;Liabilities (What You Owe)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button onclick="addRow('liability-table')" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded"&gt;+ Add Liability&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;table class="w-full text-left text-sm" id="liability-table"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;thead class="bg-gray-50 text-gray-600 border-b border-gray-200 uppercase text-xs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3"&gt;Liability Description (e.g., Mortgage, Line of Credit)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-32"&gt;Owner&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-40"&gt;Balance ($)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>&lt;th class="p-3 w-16"&gt;&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section id="tab-budget" class="tab-content space-y-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-bold text-gray-900"&gt;Income &amp; Expense Budgeting&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-500 text-sm"&gt;Plan and track recurring combined family cashflow.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 gap-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="border border-gray-200 rounded-xl p-5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-bold text-gray-800 border-b pb-2 mb-4"&gt;Monthly Household Inflow&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Individual Net Monthly Income&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-inc-ind" value="5000" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Spouse Net Monthly Income&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-inc-sp" value="4500" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Other Inflow (CCB, Dividends, etc.)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-inc-oth" value="600" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="border border-gray-200 rounded-xl p-5"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-bold text-gray-800 border-b pb-2 mb-4"&gt;Monthly Household Outflow&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="space-y-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Housing (Mortgage/Rent, Property Tax)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-exp-house" value="3000" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Transportation &amp; Insurance&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-exp-trans" value="800" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;label class="block text-xs font-medium text-gray-600"&gt;Groceries, Dining &amp; Discretionary&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;input type="number" id="budget-exp-disc" value="1500" oninput="calculateBudget()" class="w-full border rounded-lg p-2 mt-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-50 p-5 rounded-xl border border-gray-200 flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-sm font-medium text-gray-600"&gt;Net Monthly Family Surplus:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span id="budget-surplus" class="text-xl font-bold ml-2 text-emerald-600"&gt;$0&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;section id="tab-calculators" class="tab-content space-y-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-bold text-gray-900"&gt;Advanced Canadian Planning Tools&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-500 text-sm"&gt;Run multi-scenario simulations for compounding variables and jurisdictional taxes.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="border border-gray-200 rounded-xl p-5 space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-gray-800 border-b pb-2"&gt;📈 Investment Compound Interest Simulator&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="grid grid-cols-2 sm:grid-cols-4 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Initial Principal ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="comp-principal" value="50000" oninput="runCompoundCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Monthly Contribution ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="comp-monthly" value="1000" oninput="runCompoundCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Annual Return (%)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="comp-rate" value="7" oninput="runCompoundCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Years to Grow&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="comp-years" value="20" oninput="runCompoundCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-sm font-semibold text-gray-700"&gt;Estimated Future Portfolio Value: &lt;span id="comp-result" class="text-emerald-600 font-bold text-base"&gt;$0&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="border border-gray-200 rounded-xl p-5 space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-gray-800 border-b pb-2"&gt;💳 Debt Repayment Strategy Tool&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="grid grid-cols-1 sm:grid-cols-3 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Total Debt Owed ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="debt-amount" value="25000" oninput="runDebtCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Interest Rate (APR %)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="debt-rate" value="12" oninput="runDebtCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Target Monthly Payment ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="debt-payment" value="600" oninput="runDebtCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-sm font-semibold text-gray-700"&gt;Months Until Debt-Free: &lt;span id="debt-result" class="text-rose-600 font-bold text-base"&gt;0 Months&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="border border-gray-200 rounded-xl p-5 space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-gray-800 border-b pb-2"&gt;🍁 Provincial Marginal Tax Estimator&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Combined Gross Annual Household Income ($)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" id="tax-income" value="120000" oninput="runTaxCalc()" class="w-full border rounded p-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;label class="block text-xs text-gray-600"&gt;Province/Territory of Residence&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;select id="tax-province" onchange="runTaxCalc()" class="w-full border rounded p-2 bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="AB"&gt;Alberta&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="BC"&gt;British Columbia&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="ON"&gt;Ontario&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="QC"&gt;Quebec&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="NS"&gt;Nova Scotia&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="NB"&gt;New Brunswick&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="MB"&gt;Manitoba&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="SK"&gt;Saskatchewan&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="PE"&gt;Prince Edward Island&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;option value="NL"&gt;Newfoundland &amp; Labrador&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-50 p-4 rounded-lg text-sm grid grid-cols-2 gap-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;Estimated Total Income Tax: &lt;span id="tax-owed" class="font-bold text-rose-600"&gt;$0&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div&gt;Blended Effective Tax Rate: &lt;span id="tax-rate" class="font-bold text-gray-700"&gt;0%&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/section&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/main&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let appState = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>assets: [</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ desc: 'Family Home (Primary Residence)', owner: 'Joint', val: 650000 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ desc: 'Individual RRSP Portfolio', owner: 'Individual', val: 85000 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ desc: 'Spouse TFSA Account', owner: 'Spouse', val: 62000 }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>liabilities: [</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ desc: 'Primary Mortgage', owner: 'Joint', val: 380000 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ desc: 'Auto Lease / Loan Obligations', owner: 'Individual', val: 18000 }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>trendHistory: [</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ date: 'Jan 2026', networth: 385000 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ date: 'Mar 2026', networth: 391000 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ date: 'Jun 2026', networth: 399000 }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>]</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let cryptoKey = null;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let trendChartInstance = null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SUB-ROUTINE: Tab Management ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function switchTab(tabId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.tab-content').forEach(el =&gt; el.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById(`tab-${tabId}`).classList.add('active');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('aside nav button').forEach(el =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>el.classList.remove('bg-emerald-50', 'text-emerald-700');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>el.classList.add('text-gray-600', 'hover:bg-gray-100');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const activeBtn = document.getElementById(`tab-btn-${tabId}`);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-100');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>activeBtn.classList.add('bg-emerald-50', 'text-emerald-700');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(tabId === 'dashboard') { renderTrendChart(); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SUB-ROUTINE: Net Worth Table Manipulation ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addRow(tableId, desc='', owner='Joint', val=0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const row = tbody.insertRow();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>row.className = "border-b border-gray-100 hover:bg-gray-50/50 transition";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>row.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td class="p-3"&gt;&lt;input type="text" value="${desc}" class="w-full bg-transparent border-b border-transparent focus:border-gray-300 focus:outline-none py-1" oninput="syncTableToState()"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td class="p-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select class="w-full bg-transparent focus:outline-none" onchange="syncTableToState()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Individual" ${owner==='Individual'?'selected':''}&gt;Individual&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Spouse" ${owner==='Spouse'?'selected':''}&gt;Spouse&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Joint" ${owner==='Joint'?'selected':''}&gt;Joint&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td class="p-3"&gt;&lt;input type="number" value="${val}" class="w-full bg-transparent border-b border-transparent focus:border-gray-300 focus:outline-none font-medium text-gray-900 py-1" oninput="syncTableToState()"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;td class="p-3 text-center"&gt;&lt;button onclick="this.closest('tr').remove(); syncTableToState();" class="text-rose-500 hover:text-rose-700 font-bold"&gt;×&lt;/button&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>syncTableToState();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function populateTablesFromState() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('asset-table').getElementsByTagName('tbody')[0].innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('liability-table').getElementsByTagName('tbody')[0].innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>appState.assets.forEach(a =&gt; addRow('asset-table', a.desc, a.owner, a.val));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>appState.liabilities.forEach(l =&gt; addRow('liability-table', l.desc, l.owner, l.val));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function syncTableToState() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>appState.assets = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('#asset-table tbody tr').forEach(tr =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const inputs = tr.querySelectorAll('input, select');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if(inputs[0]) appState.assets.push({ desc: inputs[0].value, owner: inputs[1].value, val: parseFloat(inputs[2].value) || 0 });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>appState.liabilities = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('#liability-table tbody tr').forEach(tr =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const inputs = tr.querySelectorAll('input, select');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if(inputs[0]) appState.liabilities.push({ desc: inputs[0].value, owner: inputs[1].value, val: parseFloat(inputs[2].value) || 0 });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>recalculateConsolidatedBalances();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SUB-ROUTINE: Financial Computation Engines ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function recalculateConsolidatedBalances() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalAssets = appState.assets.reduce((sum, a) =&gt; sum + a.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalLiabs = appState.liabilities.reduce((sum, l) =&gt; sum + l.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let netWorth = totalAssets - totalLiabs;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-networth').innerText = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(netWorth);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>calculateFIRE(netWorth);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function calculateFIRE(currentNetWorth) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (currentNetWorth === undefined) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let totalAssets = appState.assets.reduce((sum, a) =&gt; sum + a.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let totalLiabs = appState.liabilities.reduce((sum, l) =&gt; sum + l.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>currentNetWorth = totalAssets - totalLiabs;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const annualExpenses = parseFloat(document.getElementById('fire-expenses').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const swr = parseFloat(document.getElementById('fire-swr').value) || 4.0;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const targetFund = annualExpenses / (swr / 100);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const progress = targetFund &gt; 0 ? Math.min((currentNetWorth / targetFund) * 100, 100) : 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-fire-target').innerText = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(targetFund);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-fire-progress').innerText = `${progress.toFixed(1)}%`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function calculateBudget() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const inc = (parseFloat(document.getElementById('budget-inc-ind').value)||0) + (parseFloat(document.getElementById('budget-inc-sp').value)||0) + (parseFloat(document.getElementById('budget-inc-oth').value)||0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const exp = (parseFloat(document.getElementById('budget-exp-house').value)||0) + (parseFloat(document.getElementById('budget-exp-trans').value)||0) + (parseFloat(document.getElementById('budget-exp-disc').value)||0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('budget-surplus').innerText = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(inc - exp);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function runCompoundCalc() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const p = parseFloat(document.getElementById('comp-principal').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const m = parseFloat(document.getElementById('comp-monthly').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const r = (parseFloat(document.getElementById('comp-rate').value) || 0) / 100 / 12;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const y = parseFloat(document.getElementById('comp-years').value) || 0;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let total = p;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for(let i = 0; i &lt; y * 12; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>total = total * (1 + r) + m;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('comp-result').innerText = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(total);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function runDebtCalc() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const bal = parseFloat(document.getElementById('debt-amount').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const apr = (parseFloat(document.getElementById('debt-rate').value) || 0) / 100 / 12;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const pmt = parseFloat(document.getElementById('debt-payment').value) || 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (pmt &lt;= bal * apr) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('debt-result').innerText = "Payment too low (Interest accumulating)";</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let months = Math.log(pmt / (pmt - bal * apr)) / Math.log(1 + apr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('debt-result').innerText = isNaN(months) ? "N/A" : `${Math.ceil(months)} Months`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function runTaxCalc() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const income = parseFloat(document.getElementById('tax-income').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const prov = document.getElementById('tax-province').value;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Simplified Combined 2026 Marginal Tax Estimates (Federal + Provincial structural approximation)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const taxBrackets = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>AB: [ { threshold: 55000, rate: 0.25 }, { threshold: 110000, rate: 0.32 }, { threshold: 165000, rate: 0.38 }, { threshold: Infinity, rate: 0.44 } ],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>ON: [ { threshold: 52000, rate: 0.20 }, { threshold: 105000, rate: 0.30 }, { threshold: 150000, rate: 0.38 }, { threshold: Infinity, rate: 0.47 } ],</p>
+<p class="p1"><span class="Apple-converted-space">                </span>BC: [ { threshold: 47000, rate: 0.20 }, { threshold: 95000, rate: 0.28 }, { threshold: 145000, rate: 0.36 }, { threshold: Infinity, rate: 0.45 } ]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const brackets = taxBrackets[prov] || taxBrackets['ON']; // Fallback calculation structure</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let taxOwed = 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let previousThreshold = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let bracket of brackets) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (income &gt; bracket.threshold) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>taxOwed += (bracket.threshold - previousThreshold) * bracket.rate;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>previousThreshold = bracket.threshold;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>taxOwed += (income - previousThreshold) * bracket.rate;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>break;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const effRate = income &gt; 0 ? (taxOwed / income) * 100 : 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tax-owed').innerText = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(taxOwed);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('tax-rate').innerText = `${effRate.toFixed(1)}%`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SUB-ROUTINE: Data Visualisation Graphing Engine ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function renderTrendChart() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = document.getElementById('trendChart').getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (trendChartInstance) { trendChartInstance.destroy(); }</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Ensure real-time local updates are captured in tracking array</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalAssets = appState.assets.reduce((sum, a) =&gt; sum + a.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalLiabs = appState.liabilities.reduce((sum, l) =&gt; sum + l.val, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>appState.trendHistory[appState.trendHistory.length - 1].networth = totalAssets - totalLiabs;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>trendChartInstance = new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'line',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: appState.trendHistory.map(h =&gt; h.date),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>label: 'Family Net Worth ($ CAD)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>data: appState.trendHistory.map(h =&gt; h.networth),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderColor: '#059669',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: 'rgba(5, 150, 105, 0.05)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>fill: true,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tension: 0.25,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderWidth: 3</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SUB-ROUTINE: Local Native Cryptography Pipeline ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function deriveKey(password, salt) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const enc = new TextEncoder();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const baseKey = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return crypto.subtle.deriveKey(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>baseKey,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ name: "AES-GCM", length: 256 },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>false,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>["encrypt", "decrypt"]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function initVault() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const password = document.getElementById('master-password').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(!password) return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const errorLabel = document.getElementById('auth-error');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>errorLabel.classList.add('hidden');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const encryptedData = localStorage.getItem('canwealth_vault');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (encryptedData) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const payload = JSON.parse(encryptedData);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const salt = new Uint8Array(payload.salt);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const iv = new Uint8Array(payload.iv);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>cryptoKey = await deriveKey(password, salt);</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const decrypted = await crypto.subtle.decrypt(</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>{ name: "AES-GCM", iv: iv },</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>cryptoKey,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>new Uint8Array(payload.ciphertext)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>appState = JSON.parse(new TextDecoder().decode(decrypted));</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Initialize empty clean vault profiles</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const salt = crypto.getRandomValues(new Uint8Array(16));</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>cryptoKey = await deriveKey(password, salt);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Force inject a fresh current record matching timeline parameters</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>appState.trendHistory.push({ date: 'Today', networth: 399000 });</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('auth-overlay').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>populateTablesFromState();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>runInitialCalculations();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>errorLabel.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error(e);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function saveAllData() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(!cryptoKey) return alert("Vault not unlocked.");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>syncTableToState();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const enc = new TextEncoder();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const iv = crypto.getRandomValues(new Uint8Array(12));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const salt = crypto.getRandomValues(new Uint8Array(16));</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Re-derive key with salt to store alongside package structure safely</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const rawPassword = document.getElementById('master-password').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const operationalKey = await deriveKey(rawPassword, salt);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ciphertext = await crypto.subtle.encrypt(</p>
+<p class="p1"><span class="Apple-converted-space">                </span>{ name: "AES-GCM", iv: iv },</p>
+<p class="p1"><span class="Apple-converted-space">                </span>operationalKey,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>enc.encode(JSON.stringify(appState))</p>
+<p class="p1"><span class="Apple-converted-space">            </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const payload = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>ciphertext: Array.from(new Uint8Array(ciphertext)),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>iv: Array.from(iv),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>salt: Array.from(salt)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>localStorage.setItem('canwealth_vault', JSON.stringify(payload));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>alert("Data Vault encrypted and saved securely to LocalStorage.");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function lockVault() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cryptoKey = null;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('master-password').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('auth-overlay').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function runInitialCalculations() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>recalculateConsolidatedBalances();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>calculateBudget();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>runCompoundCalc();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>runDebtCalc();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>runTaxCalc();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderTrendChart();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
